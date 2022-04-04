@@ -23,7 +23,7 @@ struct MeetingView: View {
                 
                 Circle()
                     .strokeBorder(lineWidth: 24, antialiased: true)
-//                    .padding(.horizontal)
+                    .padding(.horizontal)
                 MeetingFooterView(speakers: scrumTimer.speakers, skipAction: scrumTimer.skipSpeaker)
             }
         }
@@ -39,6 +39,8 @@ struct MeetingView: View {
         }
         .onDisappear {
             scrumTimer.stopScrum()
+            let newHistory = History(attendees: scrum.attendees, lengthInMinutes: scrum.timer.secondsElapsed / 60)
+            scrum.history.insert(newHistory, at: 0)
         }
         .navigationBarTitleDisplayMode(.inline) // Add border line
     }
