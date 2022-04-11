@@ -22,7 +22,7 @@ struct ScrumProgressViewStyle: ProgressViewStyle {
                     .padding(.horizontal)
             } else {
                 ProgressView(configuration)
-                    .tint(theme.mainColor)
+                    .frame(height: 12.0)
                     .padding(.horizontal)
             }
         }

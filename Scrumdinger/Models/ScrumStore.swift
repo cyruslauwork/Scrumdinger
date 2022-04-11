@@ -19,13 +19,26 @@ class ScrumStore: ObservableObject {
             .appendingPathComponent("scrums.data")
     }
     
+    static func load() async throws -> [DailyScrum] {
+        try await withCheckedThrowingContinuation { continuation in
+            load { result in
+                switch result {
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                case .success(let scrums):
+                    continuation.resume(returning: scrums)
+                }
+            }
+        }
+    }
+    
     static func load(completion: @escaping (Result<[DailyScrum], Error>)->Void) {   //  "@escaping" to make this "completion" does not require a external value. The completionHandler marked as @escaping because the closure passed as completion handler is executed once the request completes, which is some time after the data task is created.
         DispatchQueue.global(qos: .background).async {
             do {
                 let fileURL = try fileURL()
                 guard let file = try? FileHandle(forReadingFrom: fileURL) else {
                     DispatchQueue.main.async {  //  "DispatchQueue.main.async" to make inner keep running when main queue is still busy
-                        completion(.success([]))    // Success but without data "[]"
+                        completion(.success([]))    // Set to success ".success" but no data by "[]"
                     }
                     return
                 }
@@ -36,6 +49,20 @@ class ScrumStore: ObservableObject {
             } catch {
                 DispatchQueue.main.async {
                     completion(.failure(error)) // "error" is what come form "try"'s error
+                }
+            }
+        }
+    }
+    
+    @discardableResult
+    static func save(scrums: [DailyScrum]) async throws -> Int {
+        try await withCheckedThrowingContinuation { continuation in
+            save(scrums: scrums) { result in
+                switch result {
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                case .success(let scrumsSaved):
+                    continuation.resume(returning: scrumsSaved)
                 }
             }
         }
