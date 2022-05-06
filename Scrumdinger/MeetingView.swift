@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import AVFoundation
+import AVFoundation // speechRecognizer
 
 struct MeetingView: View {
     @Binding var scrum: DailyScrum // Just refer to a type, a value is required
